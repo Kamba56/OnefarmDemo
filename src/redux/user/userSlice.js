@@ -20,8 +20,9 @@ const fetchUser = createAsyncThunk('user/fetch', async () => {
 const updateUser = createAsyncThunk('user/update', async (details) => {
   const token = sessionStorage.getItem("token");
   try {
-    const response = await axios.post('https://api.onefamrtech.com/api/profile/update', details, {
+    const response = await axios.post('https://api.onefarmtech.com/api/profile/update', details, {
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       }
     });
@@ -29,6 +30,7 @@ const updateUser = createAsyncThunk('user/update', async (details) => {
     return response.data;
   }
   catch (error) {
+    console.log(error.message)
     throw error;
   }
 })
@@ -36,7 +38,8 @@ const updateUser = createAsyncThunk('user/update', async (details) => {
 const initial = {
   error: null,
   loading: false,
-  userDetails: {}
+  userDetails: {},
+  role: []
 }
 
 const userSlice = createSlice({
@@ -47,6 +50,7 @@ const userSlice = createSlice({
     builder
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.userDetails = action.payload.data.user;
+        state.role = action.payload.data.roles
         state.loading = false;
       })
       .addCase(fetchUser.pending, (state) => {
@@ -73,4 +77,4 @@ const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
-export { fetchUser };
+export { fetchUser, updateUser };
